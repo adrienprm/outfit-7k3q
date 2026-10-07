@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ma tenue</title>
+  <meta name="theme-color" content="#1f5fa6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Chaque écran est une section. Un seul est visible à la fois (classe "active"). -->
+  <main>
+    <!-- Ce soir : la météo de demain, la tenue proposée et les boutons (tonight.js). -->
+    <section id="screen-tonight" class="screen active">
+      <div id="tonight-greeting"></div>
+      <p id="tonight-date" class="muted"></p>
+      <div id="tonight-weather" class="weather"></div>
+      <div id="tonight-body"></div>
+    </section>
+
+    <!-- Garde-robe : le titre, le bouton "+" et la liste (remplie par wardrobe.js). -->
+    <section id="screen-wardrobe" class="screen">
+      <header class="bar">
+        <h1>Garde-robe</h1>
+        <button type="button" id="wardrobe-add" class="btn icon" aria-label="Ajouter une tenue">+</button>
+      </header>
+      <div id="wardrobe-list"></div>
+    </section>
+
+    <!-- Fiche d'une tenue : sert à créer ET à modifier (outfit.js). -->
+    <section id="screen-outfit" class="screen">
+      <header class="bar">
+        <button type="button" id="outfit-back" class="btn ghost">‹ Retour</button>
+      </header>
+      <h1 id="outfit-heading">Nouvelle tenue</h1>
+
+      <form id="outfit-form" novalidate>
+        <div class="photo-box">
+          <img id="outfit-photo-preview" alt="Photo de la tenue" hidden>
+          <label id="outfit-photo-label" class="btn" for="outfit-photo-input">Prendre ou choisir une photo</label>
+          <input id="outfit-photo-input" type="file" accept="image/*" hidden>
+          <button type="button" id="outfit-photo-remove" class="link" hidden>Retirer la photo</button>
+        </div>
+
+        <label class="field">
+          <span>Titre</span>
+          <input id="outfit-title" type="text" maxlength="60" autocomplete="off">
+        </label>
+
+        <label class="field">
+          <span>Description</span>
+          <textarea id="outfit-description" rows="3" maxlength="300"></textarea>
+        </label>
+
+        <fieldset>
+          <legend>Convient quand il fait</legend>
+          <div id="outfit-rain" class="chips"></div>
+          <div id="outfit-temps" class="chips"></div>
+        </fieldset>
+
+        <p id="outfit-error" class="error" role="alert" hidden></p>
+
+        <div class="actions">
+          <button type="submit" id="outfit-save" class="btn primary">Enregistrer</button>
+          <button type="button" id="outfit-delete" class="btn danger" hidden>Supprimer</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Réglages : ville, seuils de météo, sauvegarde (settings.js). -->
+    <section id="screen-settings" class="screen">
+      <h1>Réglages</h1>
+
+      <div class="card">
+        <h2>Ville</h2>
+        <p class="muted">Météo de demain pour : <strong id="settings-city"></strong></p>
+        <form id="city-form" class="inline-form" novalidate>
+          <input id="city-query" type="search" placeholder="Rechercher une ville" autocomplete="off" aria-label="Rechercher une ville">
+          <button type="submit" class="btn">Chercher</button>
+        </form>
+        <div id="city-results"></div>
+        <p id="city-message" class="status" role="status" hidden></p>
+      </div>
+
+      <div class="card">
+        <h2>Météo et tirage</h2>
+        <form id="thresholds-form" novalidate>
+          <label class="field">
+            <span>Très froid : maximum sous (°C)</span>
+            <input id="th-cold" type="number" inputmode="decimal" step="any">
+          </label>
+          <label class="field">
+            <span>Chaud : maximum au-dessus de (°C)</span>
+            <input id="th-hot" type="number" inputmode="decimal" step="any">
+          </label>
+          <p id="th-summary" class="muted"></p>
+          <label class="field">
+            <span>Mouillé : à partir de (% de pluie)</span>
+            <input id="th-rain" type="number" inputmode="numeric" min="1" max="100" step="1">
+          </label>
+          <label class="field">
+            <span>Jours avant de reproposer une tenue (1 = aucune limite)</span>
+            <input id="th-repeat" type="number" inputmode="numeric" min="1" max="14" step="1">
+          </label>
+          <p id="th-message" class="status" role="status" hidden></p>
+          <div class="actions">
+            <button type="submit" class="btn primary">Enregistrer</button>
+            <button type="button" id="th-reset" class="btn">Valeurs par défaut</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Sauvegarde</h2>
+        <p class="muted">Les tenues et les photos sont enregistrées sur ce téléphone. Exporte-les de temps en temps pour ne rien perdre.</p>
+        <div class="actions">
+          <button type="button" id="export-btn" class="btn">Exporter</button>
+          <label class="btn" for="import-input">Importer</label>
+          <input id="import-input" type="file" accept="application/json,.json" hidden>
+        </div>
+        <p id="backup-message" class="status" role="status" hidden></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Barre de navigation en bas. data-screen = l'écran à afficher. -->
+  <nav>
+    <button data-screen="tonight" class="active">Ce soir</button>
+    <button data-screen="wardrobe">Garde-robe</button>
+    <button data-screen="settings">Réglages</button>
+  </nav>
+
+  <!-- Les scripts se chargent dans cet ordre : app.js en dernier, car il utilise les autres. -->
+  <script src="js/storage.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/picker.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="js/screens/tonight.js"></script>
+  <script src="js/screens/wardrobe.js"></script>
+  <script src="js/screens/outfit.js"></script>
+  <script src="js/screens/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
