@@ -5,9 +5,11 @@
 //      (même température ET même pluie que la prévision) ;
 //   2. retirer celles déjà choisies depuis moins de 3 jours ;
 //   3. en tirer une au hasard, en évitant celles déjà proposées ce soir
-//      (quand on appuie sur « Autre tenue »).
+//      (quand on appuie sur « Autre tenue »). Le hasard est « pondéré » par
+//      la fréquence de chaque tenue : « souvent » compte 3 fois plus qu'une
+//      tenue normale, « rarement » 3 fois moins.
 //
-// Utilisation typique, côté écran « Ce soir » :
+// Utilisation typique, côté écran « Ma tenue » :
 //   const weather = await Weather.getTomorrow(settings);
 //   const result = await Picker.suggest(weather, { skip: dejaVues });
 //   result.status  -> "ok", "empty-wardrobe", "no-match" ou "all-recent"
@@ -42,8 +44,23 @@ const Picker = (() => {
 
   // ---------- Étape 3 : le tirage ----------
 
+  // Poids de chaque fréquence : une tenue « souvent » a 3 fois plus de
+  // chances qu'une tenue « normal », et « rarement » 3 fois moins.
+  const WEIGHTS = { often: 3, normal: 1, rare: 1 / 3 };
+  const FREQUENCY_LABELS = { often: "Souvent", normal: "Normal", rare: "Rarement" };
+
+  const weightOf = (outfit) => WEIGHTS[outfit.frequency] ?? WEIGHTS.normal;
+
+  // Tirage au sort pondéré : on place chaque tenue sur une « règle » dont
+  // la longueur dépend de son poids, puis on tire un point au hasard dessus.
   function randomItem(list, random) {
-    return list[Math.floor(random() * list.length)];
+    const total = list.reduce((sum, outfit) => sum + weightOf(outfit), 0);
+    let point = random() * total;
+    for (const outfit of list) {
+      point -= weightOf(outfit);
+      if (point < 0) return outfit;
+    }
+    return list[list.length - 1]; // sécurité (arrondis)
   }
 
   // Fonction "pure" : elle reçoit tout ce dont elle a besoin et ne touche
@@ -117,5 +134,5 @@ const Picker = (() => {
     });
   }
 
-  return { getCandidates, recentIds, choose, suggest };
+  return { WEIGHTS, FREQUENCY_LABELS, getCandidates, recentIds, choose, suggest };
 })();

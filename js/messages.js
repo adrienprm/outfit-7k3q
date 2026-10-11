@@ -1,4 +1,4 @@
-// messages.js : les messages de fête affichés en haut de l'écran « Ce soir ».
+// messages.js : les messages de fête affichés en haut de l'écran « Ma tenue ».
 //
 // Un message n'apparaît QUE le jour J (même jour et même mois, chaque année),
 // d'après la date du téléphone. Le reste de l'année, il reste invisible :

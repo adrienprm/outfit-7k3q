@@ -17,6 +17,8 @@ const Store = (() => {
   // Les valeurs possibles des étiquettes météo d'une tenue.
   const RAIN = ["dry", "wet"];           // sec, mouillé
   const TEMPS = ["hot", "cool", "cold"]; // chaud, frais, très froid
+  // Fréquence à laquelle une tenue est proposée : souvent, normal, rarement.
+  const FREQUENCIES = ["often", "normal", "rare"];
 
   // Réglages par défaut, utilisés tant que rien n'a été modifié.
   const DEFAULT_SETTINGS = {
@@ -93,6 +95,17 @@ const Store = (() => {
     return dayKey(new Date(y, m - 1, d + n));
   }
 
+  // Le jour pour lequel on choisit la tenue :
+  //   - avant 14 h, c'est AUJOURD'HUI (on s'habille ce matin, ou on vérifie son choix) ;
+  //   - à partir de 14 h, c'est DEMAIN (on prépare le lendemain).
+  // Pour changer l'heure de bascule, il suffit de modifier le 14 ci-dessous.
+  const SWITCH_HOUR = 14;
+
+  function targetDay(now = new Date()) {
+    const today = dayKey(now);
+    return now.getHours() < SWITCH_HOUR ? today : addDays(today, 1);
+  }
+
   // ---------- Tenues ----------
 
   function cleanOutfit(outfit) {
@@ -104,6 +117,8 @@ const Store = (() => {
       photo: outfit.photo || null, // un Blob (fichier image) ou rien
       rain: (outfit.rain || []).filter((v) => RAIN.includes(v)),
       temps: (outfit.temps || []).filter((v) => TEMPS.includes(v)),
+      // Les anciennes tenues n'ont pas de fréquence : elles comptent comme « normal ».
+      frequency: FREQUENCIES.includes(outfit.frequency) ? outfit.frequency : "normal",
       createdAt: outfit.createdAt || Date.now()
     };
     if (outfit.id !== undefined && outfit.id !== null) clean.id = outfit.id;
@@ -249,8 +264,8 @@ const Store = (() => {
   }
 
   return {
-    RAIN, TEMPS, DEFAULT_SETTINGS,
-    open, dayKey, addDays,
+    RAIN, TEMPS, FREQUENCIES, DEFAULT_SETTINGS,
+    open, dayKey, addDays, targetDay,
     getOutfits, getOutfit, saveOutfit, deleteOutfit,
     setChoice, getChoice, getChoicesSince,
     getSettings, saveSettings,

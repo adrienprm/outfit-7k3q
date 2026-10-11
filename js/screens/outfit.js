@@ -44,7 +44,6 @@ const OutfitScreen = (() => {
     const img = $("outfit-photo-preview");
     img.hidden = !blob;
     if (blob) img.src = previewUrl; else img.removeAttribute("src");
-    $("outfit-photo-label").textContent = blob ? "Changer la photo" : "Prendre ou choisir une photo";
     $("outfit-photo-remove").hidden = !blob;
   }
 
@@ -95,6 +94,26 @@ const OutfitScreen = (() => {
     });
   }
 
+  // Même principe, mais en boutons « radio » : un seul choix possible.
+  function buildRadios(containerId, values, labels, name, defaultValue) {
+    const box = $(containerId);
+    box.textContent = "";
+    values.forEach((value) => {
+      const label = document.createElement("label");
+      label.className = "chip";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = name;
+      input.value = value;
+      // defaultChecked : c'est ce que « reset() » du formulaire rétablit.
+      input.defaultChecked = value === defaultValue;
+      const span = document.createElement("span");
+      span.textContent = labels[value];
+      label.append(input, span);
+      box.append(label);
+    });
+  }
+
   const checkedValues = (name) =>
     Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
       .map((input) => input.value);
@@ -128,6 +147,7 @@ const OutfitScreen = (() => {
         title,
         description: $("outfit-description").value,
         photo: current.photo,
+        frequency: checkedValues("frequency")[0] || "normal",
         rain,
         temps
       });
@@ -156,8 +176,11 @@ const OutfitScreen = (() => {
   function init() {
     buildChips("outfit-rain", Store.RAIN, Weather.RAIN_LABELS, "rain");
     buildChips("outfit-temps", Store.TEMPS, Weather.TEMP_LABELS, "temps");
+    buildRadios("outfit-frequency", Store.FREQUENCIES, Picker.FREQUENCY_LABELS, "frequency", "normal");
 
     $("outfit-back").addEventListener("click", () => App.show("wardrobe"));
+    // Deux entrées, un seul traitement : appareil photo ou galerie.
+    $("outfit-photo-camera").addEventListener("change", onPhotoChosen);
     $("outfit-photo-input").addEventListener("change", onPhotoChosen);
     $("outfit-photo-remove").addEventListener("click", () => setPhoto(null));
     $("outfit-form").addEventListener("submit", save);
@@ -183,6 +206,7 @@ const OutfitScreen = (() => {
       $("outfit-description").value = outfit.description;
       setChecked("rain", outfit.rain);
       setChecked("temps", outfit.temps);
+      setChecked("frequency", [outfit.frequency || "normal"]);
       setPhoto(outfit.photo);
     } else {
       current = { id: null, photo: null, createdAt: undefined };

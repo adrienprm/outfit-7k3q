@@ -1,14 +1,15 @@
 /* Couleurs et réglages de base, faciles à modifier au même endroit. */
 :root {
-  --bg: #eef4fb;
+  --bg: #d6e6fa;
   --card: #ffffff;
-  --soft: #e2ecf8;
-  --line: #c9d9ec;
-  --text: #13263f;
-  --muted: #4d627c;
-  --primary: #1f5fa6;
-  --accent-bg: #d4e5fa;
-  --accent-text: #0b3d78;
+  --soft: #c2d9f5;
+  --line: #9fc0e8;
+  --text: #0b2444;
+  --muted: #35557f;
+  --primary: #1659b8;
+  --primary-light: #2f7de0;
+  --accent-bg: #b3d1f7;
+  --accent-text: #07366e;
   --danger: #a32d2d;
   --success-bg: #eaf3de;
   --success-text: #27500a;
@@ -43,18 +44,18 @@ nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   display: flex;
-  background: var(--card);
-  border-top: 1px solid var(--line);
+  background: var(--primary);
 }
 nav button {
   flex: 1;
   padding: 16px 0;
   border: 0;
+  border-top: 3px solid transparent;
   background: none;
   font-size: 14px;
-  color: var(--muted);
+  color: #d3e5fc;
 }
-nav button.active { color: var(--primary); font-weight: 600; }
+nav button.active { color: #ffffff; font-weight: 600; border-top-color: #ffffff; }
 
 /* ---------- En-tête d'écran (titre + bouton) ---------- */
 .bar {
@@ -123,6 +124,7 @@ nav button.active { color: var(--primary); font-weight: 600; }
 
 /* ---------- Fiche d'une tenue ---------- */
 .photo-box { margin: 8px 0 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.photo-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .photo-box img {
   width: 100%; max-height: 280px;
   object-fit: cover; border-radius: 12px; margin-bottom: 8px;
@@ -154,6 +156,7 @@ legend { font-size: 14px; color: var(--muted); padding: 0; margin-bottom: 8px; }
   color: var(--muted);
   font-size: 15px;
 }
+.hint { margin: 0 0 8px; }
 .chip input:checked + span {
   background: var(--accent-bg);
   border-color: var(--accent-text);
@@ -164,7 +167,7 @@ legend { font-size: 14px; color: var(--muted); padding: 0; margin-bottom: 8px; }
 .actions { display: flex; gap: 10px; margin-top: 16px; }
 .actions .btn { flex: 1; }
 
-/* ---------- Écran « Ce soir » ---------- */
+/* ---------- Écran « Ma tenue » ---------- */
 .weather { margin: 4px 0 16px; }
 .weather-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
 .weather-icon { font-size: 36px; line-height: 1; }
@@ -234,10 +237,11 @@ h2 { font-size: 17px; margin: 0 0 8px; }
 .status.error { color: var(--danger); }
 
 /* ---------- Focus visible (clavier et saisie) ---------- */
-input:focus-visible, textarea:focus-visible, .btn:focus-visible, nav button:focus-visible {
+input:focus-visible, textarea:focus-visible, .btn:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+nav button:focus-visible { outline: 2px solid #ffffff; outline-offset: -4px; }
 
 /* ---------- Message de fête (anniversaire, fête du prénom) ---------- */
 .greeting {
@@ -247,7 +251,7 @@ input:focus-visible, textarea:focus-visible, .btn:focus-visible, nav button:focu
   margin-bottom: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: #ffffff;
 }
 .greeting-icon { font-size: 36px; line-height: 1; }

@@ -125,15 +125,20 @@ const Weather = (() => {
 
   // ---------- Demain ----------
 
-  // Renvoie la météo de demain, prête à afficher et à utiliser pour le tirage :
+  // Renvoie la météo du jour visé (aujourd'hui avant 14 h, demain ensuite),
+  // prête à afficher et à utiliser pour le tirage :
   // { date, tempMax, tempMin, rainProb, code, icon, label,
-  //   temp, rain, tempLabel, rainLabel, stale }
+  //   temp, rain, tempLabel, rainLabel, isToday, stale }
+  // (le nom « getTomorrow » est resté : c'est le cas le plus courant.)
   async function getTomorrow(settings, options) {
     const { days, stale } = await getForecast(settings.city, options);
-    const wanted = Store.addDays(Store.dayKey(), 1);
-    // On cherche la date de demain ; à défaut (décalage horaire), le 2e jour.
-    const day = days.find((x) => x.date === wanted) || days[1];
-    if (!day) throw new Error("Pas de prévision pour demain.");
+    // Le jour visé : aujourd'hui avant 14 h, demain ensuite (voir Store.targetDay).
+    const today = Store.dayKey();
+    const wanted = Store.targetDay();
+    const isToday = wanted === today;
+    // On cherche cette date ; à défaut (décalage horaire), le 1er ou le 2e jour.
+    const day = days.find((x) => x.date === wanted) || days[isToday ? 0 : 1];
+    if (!day) throw new Error("Pas de prévision pour ce jour.");
     const cat = categorize(day, settings.thresholds);
     const info = describe(day.code);
     return {
@@ -142,6 +147,7 @@ const Weather = (() => {
       ...cat,
       tempLabel: TEMP_LABELS[cat.temp],
       rainLabel: RAIN_LABELS[cat.rain],
+      isToday,
       stale
     };
   }

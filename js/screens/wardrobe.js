@@ -13,7 +13,11 @@ const WardrobeScreen = (() => {
       .map((t) => Weather.TEMP_LABELS[t]);
     const rain = Store.RAIN.filter((r) => outfit.rain.includes(r))
       .map((r) => Weather.RAIN_LABELS[r]);
-    return [temps.join(", "), rain.join(", ")].filter(Boolean).join(" · ");
+    // La fréquence n'est mentionnée que si elle sort de l'ordinaire.
+    const frequency = outfit.frequency && outfit.frequency !== "normal"
+      ? "Proposée " + Picker.FREQUENCY_LABELS[outfit.frequency].toLowerCase()
+      : "";
+    return [temps.join(", "), rain.join(", "), frequency].filter(Boolean).join(" · ");
   }
 
   function renderRow(outfit) {

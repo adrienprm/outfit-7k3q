@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ma tenue</title>
-  <meta name="theme-color" content="#1f5fa6">
+  <meta name="theme-color" content="#1659b8">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="css/style.css">
@@ -13,7 +13,7 @@
 
   <!-- Chaque écran est une section. Un seul est visible à la fois (classe "active"). -->
   <main>
-    <!-- Ce soir : la météo de demain, la tenue proposée et les boutons (tonight.js). -->
+    <!-- Ma tenue : la météo du jour visé (aujourd'hui avant 14 h, demain ensuite), la tenue proposée et les boutons (tonight.js). -->
     <section id="screen-tonight" class="screen active">
       <div id="tonight-greeting"></div>
       <p id="tonight-date" class="muted"></p>
@@ -40,7 +40,12 @@
       <form id="outfit-form" novalidate>
         <div class="photo-box">
           <img id="outfit-photo-preview" alt="Photo de la tenue" hidden>
-          <label id="outfit-photo-label" class="btn" for="outfit-photo-input">Prendre ou choisir une photo</label>
+          <div class="photo-actions">
+            <label class="btn" for="outfit-photo-camera">📷 Prendre une photo</label>
+            <label class="btn" for="outfit-photo-input">🖼 Choisir dans la galerie</label>
+          </div>
+          <!-- capture="environment" ouvre directement l'appareil photo (caméra arrière) -->
+          <input id="outfit-photo-camera" type="file" accept="image/*" capture="environment" hidden>
           <input id="outfit-photo-input" type="file" accept="image/*" hidden>
           <button type="button" id="outfit-photo-remove" class="link" hidden>Retirer la photo</button>
         </div>
@@ -59,6 +64,12 @@
           <legend>Convient quand il fait</legend>
           <div id="outfit-rain" class="chips"></div>
           <div id="outfit-temps" class="chips"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Fréquence de proposition</legend>
+          <div id="outfit-frequency" class="chips"></div>
+          <p class="muted hint">« Souvent » : 3 fois plus souvent qu'une tenue normale. « Rarement » : 3 fois moins.</p>
         </fieldset>
 
         <p id="outfit-error" class="error" role="alert" hidden></p>
@@ -128,7 +139,7 @@
 
   <!-- Barre de navigation en bas. data-screen = l'écran à afficher. -->
   <nav>
-    <button data-screen="tonight" class="active">Ce soir</button>
+    <button data-screen="tonight" class="active">Ma tenue</button>
     <button data-screen="wardrobe">Garde-robe</button>
     <button data-screen="settings">Réglages</button>
   </nav>

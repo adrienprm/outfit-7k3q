@@ -1,7 +1,7 @@
 // Le service worker met les fichiers de l'app en cache pour qu'elle
 // s'ouvre même sans réseau. Quand on modifie l'app, on change le numéro
 // de version ci-dessous pour forcer la mise à jour du cache.
-const VERSION = "v11";
+const VERSION = "v14";
 const CACHE = "tenues-" + VERSION;
 
 const FILES = [

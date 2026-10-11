@@ -1,9 +1,9 @@
-// Écran « Ce soir » : la météo de demain, la tenue tirée au sort,
-// et les boutons « Autre tenue » et « Je la prends ».
+// Écran « Ma tenue » : la météo du jour visé (aujourd'hui avant 14 h, demain
+// ensuite), la tenue tirée au sort, et les boutons « Autre tenue » et « Je la prends ».
 //
 // Trois situations possibles :
 //   - une tenue est PROPOSÉE : on peut en demander une autre ou la prendre ;
-//   - une tenue est déjà CHOISIE pour demain : on la rappelle (et on peut changer) ;
+//   - une tenue est déjà CHOISIE pour ce jour : on la rappelle (et on peut changer) ;
 //   - aucune tenue ne peut être proposée : un message explique pourquoi.
 
 const TonightScreen = (() => {
@@ -79,7 +79,7 @@ const TonightScreen = (() => {
 
   function renderWeather() {
     const w = state.weather;
-    $("tonight-date").textContent = "Demain, " + dateLabel(w.date);
+    $("tonight-date").textContent = (w.isToday ? "Aujourd'hui, " : "Demain, ") + dateLabel(w.date);
 
     const box = $("tonight-weather");
     box.textContent = "";
@@ -146,7 +146,7 @@ const TonightScreen = (() => {
   function renderConfirmed() {
     const body = $("tonight-body");
     body.textContent = "";
-    body.append(outfitCard(state.outfit, "✓ Choisie pour demain"));
+    body.append(outfitCard(state.outfit, state.weather.isToday ? "✓ Choisie pour aujourd'hui" : "✓ Choisie pour demain"));
     const actions = el("div", "actions");
     actions.append(button("Changer de tenue", "btn", onChange));
     body.append(actions);
@@ -286,7 +286,7 @@ const TonightScreen = (() => {
     const run = ++runId;
     renderGreetings();
     $("tonight-body").textContent = "";
-    $("tonight-body").append(el("p", "muted", "Je regarde la météo de demain…"));
+    $("tonight-body").append(el("p", "muted", "Je regarde la météo…"));
 
     let settings, weather;
     try {
@@ -303,7 +303,7 @@ const TonightScreen = (() => {
     state.city = settings.city.name;
     renderWeather();
 
-    // Une tenue est-elle déjà choisie pour demain ?
+    // Une tenue est-elle déjà choisie pour ce jour ?
     const choice = await Store.getChoice(weather.date);
     const chosen = choice ? await Store.getOutfit(choice.outfitId) : null;
     if (run !== runId) return;
