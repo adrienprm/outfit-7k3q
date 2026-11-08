@@ -1,6 +1,6 @@
 {
-  "name": "Ma tenue",
-  "short_name": "Ma tenue",
+  "name": "Lissou's outfit",
+  "short_name": "Lissou's outfit",
   "description": "Choisir sa tenue du lendemain selon la météo.",
   "lang": "fr",
   "start_url": "./index.html",
